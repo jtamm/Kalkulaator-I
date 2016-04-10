@@ -11,6 +11,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.androidstudio.kalkulaatori.MainActivity"
     tools:showIn="@layout/activity_main">
+
     <android.support.percent.PercentRelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -82,7 +83,7 @@
                 app:layout_widthPercent="24%"
                 app:layout_marginTopPercent="20%"
                 app:layout_marginLeftPercent="0%"
-                />
+                android:id="@+id/button_seven" />
             <Button
                 android:text="8"
                 style="@style/button"
@@ -93,7 +94,7 @@
                 app:layout_widthPercent="24%"
                 app:layout_marginTopPercent="20%"
                 app:layout_marginLeftPercent="25%"
-                />
+                android:id="@+id/button_eight" />
             <Button
                 android:text="9"
                 style="@style/button"
@@ -104,7 +105,7 @@
                 app:layout_widthPercent="24%"
                 app:layout_marginTopPercent="20%"
                 app:layout_marginLeftPercent="50%"
-                />
+                android:id="@+id/button_nine" />
             <Button
                 android:text="/"
                 style="@style/button"
@@ -126,7 +127,7 @@
                 app:layout_widthPercent="24%"
                 app:layout_marginTopPercent="40%"
                 app:layout_marginLeftPercent="0%"
-                />
+                android:id="@+id/button_four" />
             <Button
                 android:text="5"
                 style="@style/button"
@@ -137,7 +138,7 @@
                 app:layout_widthPercent="24%"
                 app:layout_marginTopPercent="40%"
                 app:layout_marginLeftPercent="25%"
-                />
+                android:id="@+id/button_five" />
             <Button
                 android:text="6"
                 style="@style/button"
@@ -148,7 +149,7 @@
                 app:layout_widthPercent="24%"
                 app:layout_marginTopPercent="40%"
                 app:layout_marginLeftPercent="50%"
-                />
+                android:id="@+id/button_six" />
             <Button
                 android:text="*"
                 style="@style/button"
@@ -170,7 +171,7 @@
                 app:layout_widthPercent="24%"
                 app:layout_marginTopPercent="60%"
                 app:layout_marginLeftPercent="0%"
-                />
+                android:id="@+id/button_one" />
             <Button
                 android:text="2"
                 style="@style/button"
@@ -181,7 +182,7 @@
                 app:layout_widthPercent="24%"
                 app:layout_marginTopPercent="60%"
                 app:layout_marginLeftPercent="25%"
-                />
+                android:id="@+id/button_two" />
             <Button
                 android:text="3"
                 style="@style/button"
@@ -192,7 +193,7 @@
                 app:layout_widthPercent="24%"
                 app:layout_marginTopPercent="60%"
                 app:layout_marginLeftPercent="50%"
-                />
+                android:id="@+id/button_three" />
             <Button
                 android:text="-"
                 style="@style/button"
@@ -214,7 +215,7 @@
                 app:layout_widthPercent="24%"
                 app:layout_marginTopPercent="80%"
                 app:layout_marginLeftPercent="0%"
-                />
+                android:id="@+id/button_zero" />
             <Button
                 android:text=","
                 style="@style/button"
@@ -250,8 +251,5 @@
                 android:id="@+id/button_add" />
         </android.support.percent.PercentRelativeLayout>
     </android.support.percent.PercentRelativeLayout>
-
-
-
 
 </RelativeLayout>

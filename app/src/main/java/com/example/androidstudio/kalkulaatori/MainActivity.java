@@ -1,6 +1,11 @@
 package com.example.androidstudio.kalkulaatori;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +18,6 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
 
     AutoResizeTextView calcText;
-
     Button bReset;
     Button bBack;
     Button bDivide;
@@ -22,6 +26,17 @@ public class MainActivity extends AppCompatActivity {
     Button bAdd;
     Button bResult;
     Button bComma;
+    Button bZero;
+    Button bOne;
+    Button bTwo;
+    Button bThree;
+    Button bFour;
+    Button bFive;
+    Button bSix;
+    Button bSeven;
+    Button bEight;
+    Button bNine;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
         calcText = (AutoResizeTextView) findViewById(R.id.calc_text);
-        bReset = (Button)findViewById(R.id.button_reset);
+        bReset = (Button) findViewById(R.id.button_reset);
         bBack = (Button) findViewById(R.id.button_back);
         bDivide = (Button) findViewById(R.id.button_divide);
         bMultiple = (Button) findViewById(R.id.button_multiple);
@@ -37,8 +52,17 @@ public class MainActivity extends AppCompatActivity {
         bAdd = (Button) findViewById(R.id.button_add);
         bResult = (Button) findViewById(R.id.button_result);
         bComma = (Button) findViewById(R.id.button_comma);
-        calcText.setText(Data.calcText);
-        checkValid();
+        bZero = (Button) findViewById(R.id.button_zero);
+        bOne = (Button) findViewById(R.id.button_one);
+        bTwo = (Button) findViewById(R.id.button_two);
+        bThree = (Button) findViewById(R.id.button_three);
+        bFour = (Button) findViewById(R.id.button_four);
+        bFive = (Button) findViewById(R.id.button_five);
+        bSix = (Button) findViewById(R.id.button_six);
+        bSeven = (Button) findViewById(R.id.button_seven);
+        bEight = (Button) findViewById(R.id.button_eight);
+        bNine = (Button) findViewById(R.id.button_nine);
+        sendCalculatorBroadcast(null);
     }
 
     @Override
@@ -55,198 +79,55 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.) {
-//            return true;
-//        }
-
         return super.onOptionsItemSelected(item);
     }
 
-    public void calcButtonClicked(View view){
+    public void calcButtonClicked(View view) {
         Button b = (Button) view;
-        calcCommand(b.getText().toString());
-        Data.calcText = calcText.getText().toString();
-        checkValid();
+        sendCalculatorBroadcast(b.getText().toString());
     }
 
-    private void checkValid(){
-        bSubtract.setEnabled(true);
-        String calcTextData = calcText.getText().toString().trim();
-        if(calcTextData.equals("")){
-            bReset.setEnabled(false);
-            bBack.setEnabled(false);
-            bComma.setEnabled(false);
-            bResult.setEnabled(false);
-            bDivide.setEnabled(false);
-            bMultiple.setEnabled(false);
-            bAdd.setEnabled(false);
+    private void sendCalculatorBroadcast(String command) {
+        Intent intent = new Intent();
+        intent.setAction("com.ee.calculatorBroadcastRequest");
+        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        if (command != null) {
+            intent.putExtra("BUTTON_COMMAND", command);
         }
-        else{
-            bReset.setEnabled(true);
-            bBack.setEnabled(true);
-            bDivide.setEnabled(true);
-            bMultiple.setEnabled(true);
-            bAdd.setEnabled(true);
-            bResult.setEnabled(false);
-            bComma.setEnabled(true);
-            Character lastChar = calcTextData.charAt(calcTextData.length() - 1);
-            if(lastChar == '-'){
-                bSubtract.setEnabled(false);
-                if(calcTextData.equals("-")){
-                    bDivide.setEnabled(false);
-                    bMultiple.setEnabled(false);
-                    bAdd.setEnabled(false);
-                }
-                else if(calcTextData.length() > 1){
-                    Character c = calcTextData.charAt(calcTextData.length() - 2);
-                    if(c == '('){
-                        bDivide.setEnabled(false);
-                        bMultiple.setEnabled(false);
-                        bAdd.setEnabled(false);
-                    }
-                }
-                bComma.setEnabled(false);
-            }
-            else if(lastChar == '+'){
-                bAdd.setEnabled(false);
-                bComma.setEnabled(false);
-            }
-            else if(lastChar == '/'){
-                bDivide.setEnabled(false);
-                bComma.setEnabled(false);
-            }
-            else if(lastChar == '*'){
-                bMultiple.setEnabled(false);
-                bComma.setEnabled(false);
-            }
-            else if(lastChar == ','){
-                bComma.setEnabled(false);
-                bDivide.setEnabled(false);
-                bMultiple.setEnabled(false);
-                bSubtract.setEnabled(false);
-                bAdd.setEnabled(false);
-            }
-            else if(lastChar == '('){
-                bDivide.setEnabled(false);
-                bMultiple.setEnabled(false);
-                bAdd.setEnabled(false);
-                bComma.setEnabled(false);
-            }
-            else if(lastChar == ')'){
-                bComma.setEnabled(false);
-                bResult.setEnabled(!Data.calcAnswered);
-            }
-            else if(Character.isLetter(lastChar)){
-                bDivide.setEnabled(false);
-                bMultiple.setEnabled(false);
-                bAdd.setEnabled(false);
-                bSubtract.setEnabled(false);
-                bComma.setEnabled(false);
-            }
-            else{
-                bResult.setEnabled(!Data.calcAnswered);
-                bComma.setEnabled(!Data.calcAnswered);
-                for(int i = calcTextData.length() -1; i > 0; i--){
-                    Character c = calcTextData.charAt(i);
-                    if(c == '/' || c == '*' || c == '-' || c == '+' || c == '(' || c == ')'){
-                        break;
-                    }
-                    else if(c == ','){
-                        bComma.setEnabled(false);
-                        break;
+        sendOrderedBroadcast(intent, null, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Bundle bundle = getResultExtras(true);
+                if (bundle != null) {
+                    calcText.setText(bundle.getString("CALC_TEXT"));
+                    bReset.setEnabled(bundle.getBoolean("BUTTON_RESET_ENABLED"));
+                    bBack.setEnabled(bundle.getBoolean("BUTTON_BACK_ENABLED"));
+                    bDivide.setEnabled(bundle.getBoolean("BUTTON_DIVIDE_ENABLED"));
+                    bMultiple.setEnabled(bundle.getBoolean("BUTTON_MULTIPLE_ENABLED"));
+                    bSubtract.setEnabled(bundle.getBoolean("BUTTON_SUBTRACT_ENABLED"));
+                    bAdd.setEnabled(bundle.getBoolean("BUTTON_ADD_ENABLED"));
+                    bResult.setEnabled(bundle.getBoolean("BUTTON_RESULT_ENABLED"));
+                    bComma.setEnabled(bundle.getBoolean("BUTTON_COMMA_ENABLED"));
+                    bZero.setEnabled(bundle.getBoolean("BUTTON_ZERO_ENABLED"));
+                    bOne.setEnabled(bundle.getBoolean("BUTTON_ONE_ENABLED"));
+                    bTwo.setEnabled(bundle.getBoolean("BUTTON_TWO_ENABLED"));
+                    bThree.setEnabled(bundle.getBoolean("BUTTON_THREE_ENABLED"));
+                    bFour.setEnabled(bundle.getBoolean("BUTTON_FOUR_ENABLED"));
+                    bFive.setEnabled(bundle.getBoolean("BUTTON_FIVE_ENABLED"));
+                    bSix.setEnabled(bundle.getBoolean("BUTTON_SIX_ENABLED"));
+                    bSeven.setEnabled(bundle.getBoolean("BUTTON_SEVEN_ENABLED"));
+                    bEight.setEnabled(bundle.getBoolean("BUTTON_EIGHT_ENABLED"));
+                    bNine.setEnabled(bundle.getBoolean("BUTTON_NINE_ENABLED"));
+                    byte[] expressionParcelableData = bundle.getByteArray("EXPRESSION_DATA");
+                    if (expressionParcelableData != null) {
+                        Intent intent1 = new Intent();
+                        intent1.putExtra("COMMAND", "PUT_EXPRESSION");
+                        intent1.putExtra("DATA", expressionParcelableData);
+                        intent.setAction("com.ee.databaseCalculatorBroadcastRequest");
+                        sendOrderedBroadcast(intent1, null, null, null, Activity.RESULT_OK, null, null);
                     }
                 }
             }
-        }
-    }
-
-    private String doubleToString(double d){
-        if(d == (long)d){
-            return String.format("%d",(long)d);
-        }
-        else{
-            return String.format("%s", d);
-        }
-    }
-
-    public void calcCommand(String command){
-        String calcTextData = calcText.getText().toString();
-        if(command.equals("Back")){
-            if(calcTextData.length() != 0){
-                if(Data.calcAnswered){
-                    String[] d1 = calcTextData.split("=");
-                    calcText.setText(d1[0]);
-                    Data.calcAnswered = false;
-                }
-                else{
-                    if(calcTextData.length() == 1){
-                        calcText.setText(" ");
-                        calcText.setText("");
-                    }
-                    else{
-                        calcText.setText(calcTextData.substring(0, calcTextData.length() - 1));
-                    }
-                }
-            }
-        }
-        else if(command.equals("C")){
-            calcText.setText(" ");
-            calcText.setText("");
-            Data.calcAnswered = false;
-        }
-        else if(command.equals("=")){
-            if(!Data.calcAnswered){
-                try {
-                    MathNode mathNode = MathNode.parse(calcTextData.replace('/', ':').replace(',','.'));
-                    //String.format("%s=%s",calcTextData, mathNode.answer())
-                    double answeredValue = mathNode.answer();
-                    if(Double.isInfinite(answeredValue)){
-                        if(answeredValue == Double.POSITIVE_INFINITY){
-                            calcText.setText(String.format("%s=%s",calcTextData, "\u221E"));
-                        }
-                        else{
-                            calcText.setText(String.format("%s=%s",calcTextData, "-\u221E"));
-                        }
-                    }
-                    else{
-                        calcText.setText(String.format("%s=%s",calcTextData, doubleToString(answeredValue).replace('.',',')));
-                    }
-                }catch (Exception e) {
-                    calcText.setText(String.format("%s=%s",calcTextData, "error"));
-                }
-                Data.calcAnswered = true;
-            }
-        }
-        else if(command.equals("/") || command.equals("*") || command.equals("-") || command.equals("+")){
-            if(Data.calcAnswered){
-                String[] d = calcTextData.split("=");
-                calcText.setText(d[1] + command);
-                Data.calcAnswered = false;
-            }
-            else{
-                if(calcTextData.length() != 0){
-                    Character lastChar = calcTextData.charAt(calcTextData.length() - 1);
-                    if(lastChar == '/' || lastChar == '*' || lastChar == '-' || lastChar == '+'){
-                        calcText.setText(calcTextData.substring(0,calcTextData.length()-1) + command);
-                    }
-                    else{
-                        calcText.setText(calcTextData + command);
-                    }
-                }
-                else if(command.equals("-")){
-                    calcText.setText(calcTextData + command);
-                }
-            }
-        }
-        else{
-            if(Data.calcAnswered){
-                calcText.setText(command);
-                Data.calcAnswered = false;
-            }
-            else{
-                calcText.setText(calcTextData + command);
-            }
-        }
+        }, null, Activity.RESULT_OK, null, null);
     }
 }
